@@ -34,14 +34,14 @@ def parser_args ():
     parser.add_argument("--version", help="print version and exit", action="store_true")
     parser.add_argument("-v","--verbose", help="print info msg", action="store_true")
     parser.add_argument("-d","--debug", help="print debug info", action="store_true")
-    parser.add_argument('-f','--fingerprint', nargs='?', help="")
+    parser.add_argument('-f','--fingerprint', required=True, nargs='+', help="")
     return parser
 
 #------------------------------------------------------------------------------
 def signal_handler(sig, frame):
     print('Ctrl+C detected.')
     sys.exit(0)
-
+    
 #------------------------------------------------------------------------------
 def find_ips(args):
 
