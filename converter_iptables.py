@@ -34,7 +34,7 @@ def parser_args ():
     parser.add_argument("--version", help="print version and exit", action="store_true")
     parser.add_argument("-v","--verbose", help="print info msg", action="store_true")
     parser.add_argument("-d","--debug", help="print debug info", action="store_true")
-    parser.add_argument('-f','--fingerprint', required=True, nargs='+', help="")
+    parser.add_argument('-f','--fingerprint', required=True, help="fingerprint json file")
     return parser
 
 #------------------------------------------------------------------------------
@@ -45,6 +45,7 @@ def signal_handler(sig, frame):
 #------------------------------------------------------------------------------
 def find_ips(args):
 
+    file = args.fingerprint
     if (args.fingerprint):
         file = args.fingerprint
         if not (os.path.isfile(file)):
@@ -54,7 +55,7 @@ def find_ips(args):
     openfile=open(args.fingerprint)
     jsondata=json.load(openfile)
     data = jsondata['src_ips']
-    df=pd.DataFrame(data)
+    df=pd.DataFrame(data,columns=['ip'])
     openfile.close()
     
     df.drop_duplicates('ip',keep='first',inplace=True)
@@ -104,6 +105,8 @@ def smart_aggregate(df):
     return all_networks
 #------------------------------------------------------------------------------
 def build_iptables_rules(fingerprint,all_networks):
+
+    fingerprint = os.path.basename(fingerprint)
     fingerprint = str(fingerprint.split(".")[0])
     filename = "{}.iptables".format(fingerprint)
     with open(filename, "w") as myfile:
