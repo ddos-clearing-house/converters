@@ -130,8 +130,8 @@ if __name__ == '__main__':
     subnets = smart_aggregate(df)
     
     print ("Fingerprint processed: {}".format(args.fingerprint))
-    print ("Unique IPs found: {}".format(len(df['ip'])))
-    print ("The IPs were summarized in: {} subnetworks".format(len(subnets)))
+    print ("IPs found: {}".format(len(df['ip'])))
+    print ("The IPs were summarized in: {} subnets".format(len(subnets)))
 
     build_iptables_rules(args.fingerprint,subnets)
 
