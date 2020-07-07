@@ -35,6 +35,7 @@ def parser_args ():
     parser.add_argument("-v","--verbose", help="print info msg", action="store_true")
     parser.add_argument("-d","--debug", help="print debug info", action="store_true")
     parser.add_argument('-f','--fingerprint', required=True, help="fingerprint json file")
+    parser.add_argument('-tdf','--tcpdumpfilter', required=False, help="generate tcpdump filter expression file", action="store_true")
     return parser
 
 #------------------------------------------------------------------------------
@@ -158,5 +159,6 @@ if __name__ == '__main__':
     print ("The IPs were summarized in: {} subnets".format(len(subnets)))
 
     build_iptables_rules(args.fingerprint, subnets)
-    build_tcpdump_filters(args.fingerprint, subnets)
+    if args.tcpdumpfilter:
+        build_tcpdump_filters(args.fingerprint, subnets)
 
