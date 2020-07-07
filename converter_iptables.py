@@ -15,9 +15,9 @@ import re
 import signal
 import sys
 
-import ipaddress
-import json
+import netaddr
 import ipaddr
+import json
 import math
 ###############################################################################
 ### Program settings
@@ -119,6 +119,30 @@ def build_iptables_rules(fingerprint,all_networks):
         myfile.write("sudo iptables -I INPUT -m set --match-set {} src -j DROP\n".format(fingerprint[:30]))
     print ("IPTABLES rules saved on: {}".format(filename))
 
+def build_tcpdump_filters(fingerprint,all_networks):
+
+    fingerprint = os.path.basename(fingerprint)
+    fingerprint = str(fingerprint.split(".")[0])
+    filename = "{}.tcpdf".format(fingerprint)
+    print("{} subnets to process".format(len(all_networks)))
+    
+    aggregate_subnets(all_networks)
+
+    with open(filename, "w") as filter_file:
+        for index, net in enumerate(all_networks):
+            if index == 0:
+                filter_file.write("src net not {} ".format(net))
+            else:
+                filter_file.write("and not {} ".format(net))
+    print ("TCPDUMP filter rules saved on: {}".format(filename))
+
+def aggregate_subnets(nets):
+    repr = map(lambda x: netaddr.IPNetwork(str(x)), nets)
+    merged = netaddr.cidr_merge(repr)
+    print(str(len(nets)) + " -> " + str(len(merged)))
+    if len(nets) < 100 or len(merged) < 0:
+        print(nets, merged)
+
 ###############################################################################
 ### Main Process
 if __name__ == '__main__':
@@ -133,5 +157,6 @@ if __name__ == '__main__':
     print ("IPs found: {}".format(len(df['ip'])))
     print ("The IPs were summarized in: {} subnets".format(len(subnets)))
 
-    build_iptables_rules(args.fingerprint,subnets)
+    build_iptables_rules(args.fingerprint, subnets)
+    build_tcpdump_filters(args.fingerprint, subnets)
 
