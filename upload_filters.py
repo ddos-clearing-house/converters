@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import requests
 import argparse
+import os
 
 parser = argparse.ArgumentParser(description='Publish filter rules to DDoSDB')
 parser.add_argument('--authtoken',
@@ -10,8 +11,13 @@ parser.add_argument('--url',
 parser.add_argument('file', help='The iptables script to be published')
 args = parser.parse_args()
 
+inputFile = args.file
 
-key = args.file.split(".")[0]
+files = {
+    "iptables": open(inputFile, "rb")
+}
+
+key = os.path.basename(inputFile).split(".")[0]
 authtoken = args.authtoken
 url = args.url
 
@@ -20,9 +26,6 @@ headers = {
     "Authorization": "Bearer " + authtoken
 }
 
-files = {
-    "iptables": open(key + ".iptables", "rb")
-}
 
 r = requests.post(url, files=files, headers=headers,verify=True)
 if r.status_code != 201:
