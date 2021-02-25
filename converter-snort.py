@@ -48,8 +48,15 @@ def convert_tcp_flags(hex_num):
     """
         Convert TCP Flags from hex value to string
     """
-    
-    hex_num = str(hex_num[0][4:])
+
+    # string to binary
+    try:
+        hex_num  = int(hex_num[0],0)
+        hex_num = f'0b{hex_num:08b}'
+        hex_num = hex_num[4:]
+    except:
+        return None
+
     flags_dict =  {
         0 : "U", # URG
         1 : "A", # ACK
@@ -73,10 +80,12 @@ def convert_fingerprint_to_suricata(fingerprint):
     dst_port = "any"
     src_net  = "any"
     dst_net  = "any"
+    ip_proto = "any"
     
     if 'tcp_flags' in fingerprint:
         tcp_flag = convert_tcp_flags(fingerprint['tcp_flags'])
-        ruler_option.append("flags:{};".format(tcp_flag[0]))
+        if tcp_flag:
+            ruler_option.append("flags:{};".format(tcp_flag[0]))
         
     if 'ip_proto' in fingerprint:
         ip_proto = fingerprint['ip_proto'][0]
@@ -138,7 +147,11 @@ if __name__ == '__main__':
     fingerprint = args.fingerprint
     openfile=open(fingerprint)
     jsondata=json.load(openfile)
-    data = (jsondata['attack_vector'])
+    try:
+        data = (jsondata['attack_vector'])
+    except:
+        print ("Fingerprint not compatible.")
+        sys.exit(1)
     
     print ("# DDoS-CH: rules generation for Suricata")
     if (len(data) <1):
@@ -152,4 +165,5 @@ if __name__ == '__main__':
         rule = convert_fingerprint_to_suricata(fingerprint)
         print ("# Generated rule ")
         print ("{}\n".format(rule))
+    sys.exit(0)
 
