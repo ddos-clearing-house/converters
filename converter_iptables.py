@@ -45,16 +45,22 @@ def signal_handler(sig, frame):
 #------------------------------------------------------------------------------
 def find_ips(args):
 
-    file = args.fingerprint
-    if (args.fingerprint):
-        file = args.fingerprint
-        if not (os.path.isfile(file)):
-            print ("file not found: {}".format(file))
-            sys.exit(0)
+    if (not args.fingerprint):
+        parser.print_help()
+        sys.exit(IOError("\nInput file not provided. Use '-f' for that."))
+
+    if (not os.path.exists(args.fingerprint)):
+        sys.exit(IOError("File " + args.fingerprint + " is not readble"))
 
     openfile=open(args.fingerprint)
     jsondata=json.load(openfile)
-    data = jsondata['src_ips']
+
+    try:
+        data = jsondata['attackers']
+    except:
+        print ("Fingerprint not compatible.")
+        sys.exit(1)
+
     df=pd.DataFrame(data,columns=['ip'])
     openfile.close()
     
@@ -132,6 +138,4 @@ if __name__ == '__main__':
     print ("Fingerprint processed: {}".format(args.fingerprint))
     print ("IPs found: {}".format(len(df['ip'])))
     print ("The IPs were summarized in: {} subnets".format(len(subnets)))
-
     build_iptables_rules(args.fingerprint,subnets)
-
