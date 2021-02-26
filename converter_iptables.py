@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 ###############################################################################
-#  
-#  
-# @copyright - Joao Ceron - ceron@botlog.org
+# Concordia Project
+#
+# This project has received funding from the European Union’s Horizon
+# 2020 Research and Innovation program under Grant Agreement No 830927.
+#
+# Joao Ceron - joaoceron@sidn.nl
 ###############################################################################
 
 ###############################################################################
