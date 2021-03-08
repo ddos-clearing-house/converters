@@ -59,14 +59,17 @@ def find_ips(args):
     jsondata=json.load(openfile)
 
     try:
-        data = jsondata['attackers']
+        data = jsondata['attack_vector']
     except:
         print ("Fingerprint not compatible.")
         sys.exit(1)
 
-    df=pd.DataFrame(data,columns=['ip'])
     openfile.close()
-    
+    df=pd.DataFrame(data)
+    df = df['src_ips'].apply(lambda x: ','.join(map(str, x))).to_frame()
+    ips = df['src_ips'].str.cat(sep=',').split(",")
+    df = pd.DataFrame(ips,columns=['ip'])
+
     df.drop_duplicates('ip',keep='first',inplace=True)
     df['src_net'] =  df.ip.str.extract('(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.)\\d{1,3}')+"0"
     df['ip'] = df['ip'].apply(lambda x: ipaddr.IPv4Address(x))
@@ -134,6 +137,9 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
     parser = parser_args()
     args = parser.parse_args()
+
+    if (not os.path.exists(args.fingerprint)):
+        sys.exit(IOError("File " + args.fingerprint + " is not readble"))   
 
     df = find_ips(args) 
     subnets = smart_aggregate(df)
