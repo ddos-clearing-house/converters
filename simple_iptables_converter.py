@@ -6,6 +6,7 @@ import os
 import sys
 from pathlib import Path
 
+VERSION = '2.0'
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel('CRITICAL')
 HANDLER = logging.StreamHandler()
@@ -18,7 +19,7 @@ def argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", help="print version and exit", action="store_true")
     parser.add_argument("-v", "--verbose", help="print info msg", action="store_true")
     parser.add_argument("-d", "--debug", help="print debug info", action="store_true")
-    parser.add_argument('-f', '--fingerprint', required=True, help="fingerprint json file")
+    parser.add_argument('-f', '--fingerprint', help="fingerprint json file")
     parser.add_argument('-e', '--enable', help="Automatically enable the generated iptables rules", action='store_true')
     return parser
 
@@ -90,11 +91,16 @@ def generate_iptables_rules(fingerprint_name: dict, ips: Set[str], ports: Set[in
 
 if __name__ == '__main__':
     args = argument_parser().parse_args()
+    if args.version:
+        print(f"Converter version [{VERSION}]")
+        sys.exit()
     if args.verbose:
         LOGGER.setLevel('INFO')
     if args.debug:
         LOGGER.setLevel('DEBUG')
 
+    if not args.fingerprint:
+        sys.exit("Please provide a DDoS fingerprint with '-f <path>'.")
     _fingerprint = load_fingerprint(args.fingerprint)
     _ips, _ports, _protos = extract_ips_ports_protos(_fingerprint)
     _proto = _protos.pop() if len(_protos) == 1 else None
