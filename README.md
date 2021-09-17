@@ -4,3 +4,5 @@
 
 Requirements:
 - Python 3.7+
+- iptables
+- ipset
