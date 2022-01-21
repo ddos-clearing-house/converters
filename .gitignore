@@ -1,0 +1,22 @@
+# python temp files
+*__pycache__*
+*.pyc
+
+# python virtual environment
+venv/
+
+# docker images conf
+docker-compose.yml
+
+# misp image dirs
+files/
+logs/
+server-configs/
+ssl/
+
+# program inputs
+fingerprint*.json
+
+# program outputs
+*.iptables
+*.snort
