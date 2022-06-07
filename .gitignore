@@ -4,6 +4,7 @@
 
 # python virtual environment
 venv/
+.python-version
 
 # docker images conf
 docker-compose.yml

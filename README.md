@@ -42,3 +42,4 @@ Converts a fingerprint json file to a set of snort rules.
 - `-a` or `--analysis_level` analysis level of the newly created event [0-2]
 - `-t` or `--threat_level` threat level ID of the newly created event [1-4]
 - `-s` or `--subnets` use subnets as attributes instead of ips (reccomended if the number of ip addresses is huge)
+- `-g` or `--sharing_group` the group used to share the event on MISP

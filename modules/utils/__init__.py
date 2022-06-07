@@ -77,6 +77,12 @@ def setup(program_name):
         action='store_true',
         help='add subnets as attributes instead of ips'
     )
+    parser.add_argument(
+        '-g',
+        '--sharing_group',
+        default='Concordia Anti-DDoS Pilot IT',
+        help='Group used to share the event on MISP'
+    )
     args = parser.parse_args()
     if not os.path.exists(args.fingerprint):
         logging.critical('File {} is not readble.'.format(args.fingerprint))
