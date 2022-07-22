@@ -26,16 +26,17 @@ def main(args):
         # ATTACK VECTOR SERVICE
         event.add_attribute(category='Network activity', type='comment', value=attack_vector['service'], comment=f'vector {i} service')
         # ATTACK VECTOR PROTOCOL
-        ddos.add_attribute('protocol', attack_vector['protocol'])
+        ddos.add_attribute('protocol', attack_vector['protocol'], comment=f'vector {i} protocol')
         # ATTACK VECTOR SOURCE_PORT
         if type(attack_vector['source_port']) == int:
-            ddos.add_attribute('src-port', attack_vector['source_port'])
+            ddos.add_attribute('src-port', attack_vector['source_port'], comment=f'vector {i} src-port')
         # ATTACK VECTOR FRACTION OF ATTACK
         if type(attack_vector['fraction_of_attack']) == float:
             event.add_attribute(category='Network activity', type='comment', value=attack_vector['fraction_of_attack'], comment=f'vector {i} fraction_of_attack')
         # ATTACK VECTOR DESTINATION PORTS
         if type(attack_vector['destination_ports']) == dict:
-            ddos.add_attributes('dst-port', list(map(lambda x: int(x), attack_vector['destination_ports'].keys())))
+            for destination_port, percentage in attack_vector['destination_ports'].items():
+                ddos.add_attribute('dst-port', int(destination_port), comment=f'vector {i} dst-port; percentage {percentage}')
         # ATTACK VECTOR TCP FLAGS
         if type(attack_vector['tcp_flags']) == dict:
             event.add_attribute(category='Network activity', type='comment', value=' '.join(attack_vector['tcp_flags']), comment=f'vector {i} tcp_flags')
@@ -51,9 +52,10 @@ def main(args):
         # ATTACK VECTOR DURATION SECONDS
         event.add_attribute(category='Network activity', type='comment', value=attack_vector['duration_seconds'], comment=f'vector {i} duration_seconds')
         # ATTACK VECTOR SOURCE IPS
-        ddos.add_attributes('ip-src', attack_vector['source_ips'])
+        for source_ip in attack_vector['source_ips']:
+            ddos.add_attribute('ip-src', source_ip, comment=f'vector {i} ip-src')
         # TARGET
-        ddos.add_attribute('ip-dst', data['target'])
+        ddos.add_attribute('ip-dst', data['target'], comment=f'vector {i} target')
         event.add_object(ddos, pythonify=True)
     # TAGS
     for tag in data['tags']:
