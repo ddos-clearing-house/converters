@@ -24,7 +24,8 @@ def main(args):
     for attack_vector, i in zip(data['attack_vectors'], range(len(data['attack_vectors']))):
         ddos = pymisp.MISPObject('ddos', strict=True)
         # ATTACK VECTOR SERVICE
-        event.add_attribute(category='Network activity', type='comment', value=attack_vector['service'], comment=f'vector {i} service')
+        if 'service' in attack_vector and attack_vector['service']:
+            event.add_attribute(category='Network activity', type='comment', value=attack_vector['service'], comment=f'vector {i} service')
         # ATTACK VECTOR PROTOCOL
         ddos.add_attribute('protocol', attack_vector['protocol'], comment=f'vector {i} protocol')
         # ATTACK VECTOR SOURCE_PORT
